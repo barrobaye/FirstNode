@@ -1,0 +1,26 @@
+Post http://localhost:3001/api/v1/clients
+Content-Type: application/json
+Accept:  application/json
+
+{
+  "nom": "John",
+  "prenom": "Doe",
+  "telephone": "123456789"
+}
+###
+
+GET  http://localhost:3000/api/v1/clients
+  
+##
+Post http://localhost:3001/api/v1/clients
+Accept:  application/json
+
+{
+  "nom": "John",
+  "prenom": "Doe",
+  "telephone": "123456789",
+  "user": {
+    "email": "johndoe@example.com",
+    "password": "password123"
+  }
+}

@@ -1,0 +1,20 @@
+Post http://localhost:3000/api/v1/article
+Content-Type: application/json
+Accept:      application/json
+
+{
+    "libelle":"Lait",
+    "prix": 3000,
+    "quantiteStock": 20
+}
+###
+GET http://localhost:3000/api/v1/article
+
+
+###
+GET http://localhost:3000/api/v1/article/1
+
+
+###
+GET http://localhost:3000/api/v1/article/
+
