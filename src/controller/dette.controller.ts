@@ -16,6 +16,17 @@ export default class DetteController extends Controller{
         return res.status(StatusCodes.NOT_FOUND).send(
             RestResponse.response(null, StatusCodes.NOT_FOUND, "Le Client n'existe pas")
         );
+      
+    } 
+   
+       // Check if article exists
+       const article = await app.prisma.article.findUnique({
+        where: { id: Number.parseInt(req.body.detail.articleId) },
+    });
+    if (!article) {
+        return res.status(StatusCodes.NOT_FOUND).send(
+            RestResponse.response(null, StatusCodes.NOT_FOUND, "article n'existe pas")
+        );
     } 
       const newData = await app.prisma.$transaction(async (tx) => {
           // Create Dette

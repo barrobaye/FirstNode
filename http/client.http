@@ -1,12 +1,11 @@
 POST http://localhost:3000/api/v1/clients
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJiYXlpaSIsInJvbGUiOiJDTElFTlQiLCJpYXQiOjE3MjM2NTAzNDQsImV4cCI6MTcyMzY1Mzk0NH0.Zh4QDPm8Fm-oP0VXM3M7sWTN1M6adTTtXaX5n7y6w40
 
 {
-  "nom": "ottLy",
-  "prenom": "SYlla",
-  "telephone": "797191389"
+  "nom": "Barroz",
+  "prenom": "Zarry",
+  "telephone": "791191189"
 }
 ###
 

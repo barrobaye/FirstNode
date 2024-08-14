@@ -4,9 +4,10 @@ Accept: application/json
 
 
 {
-    "email":"bayii",
-    "password":"baye",
-    "clientId":1
+    "email":"yarro@gmail.com",
+    "password":"faye",
+    "clientId":4,
+    "role": 
 }
 
 #####
