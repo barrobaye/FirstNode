@@ -20,7 +20,7 @@ const ValidatorArticle = ():RequestHandler => {
             if (error instanceof ZodError) {
                 const reponseValidator: ResponseValidator = {
                     errors: error.errors.map((issue: any)=>({
-                        message:"${issue.path.join('.')} is ${issue.message}"
+                        message:`${issue.path.join('.')} is ${issue.message}`
 
                     })),
                     status: false

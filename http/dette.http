@@ -1,0 +1,20 @@
+POST http://localhost:3000/api/v1/dette
+Content-Type: application/json
+Accept: application/json
+
+{
+    "montant": 120000,
+    "clientId": 1,
+    "detail": [
+        {
+            "articleId": 1,
+            "qteVente": 1,
+            "prixVente": 40000000
+        }
+    ]
+}
+
+
+###
+GET http://localhost:3000/api/v1/dette
+

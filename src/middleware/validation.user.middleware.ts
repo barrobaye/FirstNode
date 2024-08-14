@@ -1,19 +1,20 @@
 import { RequestHandler } from "express";
 import { ResponseValidator, supportedMethods } from "./response.validator";
-import { clientPostShema } from "./validator/client.shema";
+import { articlePostShema } from "./validator/article.shema";
 import { ZodError } from "zod";
-import RestResponse from "../core/response";
 import { StatusCodes } from "http-status-codes";
+import RestResponse from "../core/response";
+import { userPostShema } from "./validator/user.shema";
 
-const ValidatorClient = ():RequestHandler => {
-    return (req, res, next) => {
+const ValidatorArticle = ():RequestHandler => {
+    return  async (req, res, next) => {
         //Methode de la requête 
         const method = req.method.toLowerCase();
         if (!supportedMethods.includes(method)) {
              return next ();
         }
         try {
-            clientPostShema.parse(req.body);
+         await   userPostShema.parseAsync(req.body);
             next();
               
         } catch (error) {
@@ -25,11 +26,11 @@ const ValidatorClient = ():RequestHandler => {
                     })),
                     status: false
                 }
-                return res.status(StatusCodes.UNPROCESSABLE_ENTITY).send(RestResponse.response(reponseValidator, StatusCodes.UNPROCESSABLE_ENTITY));
+                return res.status(StatusCodes.UNPROCESSABLE_ENTITY).send(RestResponse.response(reponseValidator, StatusCodes.CONFLICT));
                 
             }
             
         }
     }
 }
-export default ValidatorClient
+export default ValidatorArticle

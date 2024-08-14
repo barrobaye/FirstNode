@@ -5,10 +5,13 @@ import { clientPostShema } from "./validator/client.shema";
 import { StatusCodes } from "http-status-codes";
 import RestResponse from "../core/response";
 import { z, ZodError } from "zod";
+import { userPostShema } from "./validator/user.shema";
 
 const shema = {
     "post/api/v1/clients":clientPostShema,
-    "post/api/v1/article":articlePostShema
+    "post/api/v1/article":articlePostShema,
+    "post/api/v1/auth":userPostShema
+    
     } as { [key:string]:z.ZodObject<any,any> };
 
     const ValidatorShema = ():RequestHandler => {
@@ -31,7 +34,7 @@ const shema = {
                 if (error instanceof ZodError) {
                     const reponseValidator: ResponseValidator = {
                         errors: error.errors.map((issue: any)=>({
-                            message:`${issue.path.join('.')} is ${issue.message}`,
+                            message:`${issue.path.join('.')} ${issue.message}`,
     
                         })),
                         status: false

@@ -3,117 +3,78 @@ import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-
 async function main() {
-  // Création des utilisateurs
-  const user1 = await prisma.user.create({
+  // Hash du mot de passe
+  const hashedPassword = await bcrypt.hash('password123', 10);
+
+  // Créer un client avec un utilisateur associé
+  const client = await prisma.client.create({
     data: {
-      email: 'user1@example.com',
-      password: await bcrypt.hash('password123', 10),
-      role: 'USER',
+      nom: 'Doe',
+      prenom: 'John',
+      telephone: '1234567890',
+      User: {
+        create: {
+          email: 'john.doe@example.com',
+          password: hashedPassword,
+          role: 'CLIENT',
+        },
+      },
     },
   });
 
-  const user2 = await prisma.user.create({
-    data: {
-      email: 'user2@example.com',
-      password: await bcrypt.hash('password456', 10),
-      role: 'ADMIN',
-    },
-  });
-
-  // Création des clients
-  const client1 = await prisma.client.create({
-    data: {
-      nom: 'Diop',
-      prenom: 'Fatou',
-      telephone: '77777777',
-      userId: user1.id,
-    },
-  });
-
-  const client2 = await prisma.client.create({
-    data: {
-      nom: 'Sall',
-      prenom: 'Samba',
-      telephone: '789801232',
-      userId: user2.id,
-    },
-  });
-
-  // Création des articles
+  // Créer des articles
   const article1 = await prisma.article.create({
     data: {
       libelle: 'Article 1',
-      prix: 100,
-      quantiteStock: 10,
+      prix: 10.0,
+      quantiteStock: 100,
     },
   });
 
   const article2 = await prisma.article.create({
     data: {
       libelle: 'Article 2',
-      prix: 200,
-      quantiteStock: 5,
+      prix: 20.0,
+      quantiteStock: 50,
     },
   });
 
-  const article3 = await prisma.article.create({
+  // Créer une dette pour le client
+  const dette = await prisma.dette.create({
     data: {
-      libelle: 'Article 3',
-      prix: 150,
-      quantiteStock: 20,
-    },
-  });
-
-  // Création des dettes
-  const dette1 = await prisma.dette.create({
-    data: {
-      clientId: client1.id,
+      clientId: client.id,
       date: new Date(),
-      montantDue: 1700,
-      montantVerser: 0,
-      articles: {
+      montant: 200.0,
+      montantDue: 150.0,
+      montantVerser: 50.0,
+      detail: {
         create: [
-          { articleId: article1.id },
-          { articleId: article2.id },
-          { articleId: article3.id },
+          {
+            articleId: article1.id,
+            prixVente: 10.0,
+            qteVente: 5.0,
+          },
+          {
+            articleId: article2.id,
+            prixVente: 20.0,
+            qteVente: 2.5,
+          },
         ],
       },
     },
   });
 
-  const dette2 = await prisma.dette.create({
-    data: {
-      clientId: client2.id,
-      date: new Date(),
-      montantDue: 700,
-      montantVerser: 0,
-      articles: {
-        create: [
-          { articleId: article1.id },
-          { articleId: article2.id },
-        ],
-      },
-    },
-  });
-
-  // Création des paiements
+  // Créer un paiement pour cette dette
   await prisma.paiement.create({
     data: {
-      detteId: dette1.id,
-      montant: 1000,
+      detteId: dette.id,
+      montant: 50.0,
       date: new Date(),
     },
   });
 
-  await prisma.paiement.create({
-    data: {
-      detteId: dette2.id,
-      montant: 500,
-      date: new Date(),
-    },
-  });
+  console.log('Database seeded successfully');
 }
 
 main()

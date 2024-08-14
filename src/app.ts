@@ -2,6 +2,9 @@ import express from 'express';
 import routerArticle from './route/article.route'
 import routerClient from './route/client.route';
 import prismaClient from './config/prisma.config';
+import routerAuth from './route/auth.route';
+import routerDette from './route/dette.route';
+import routerPaiement from './route/paiement.route';
    
 
 
@@ -21,6 +24,9 @@ class App{
     routes(){
      this.server.use("/api/v1/article",routerArticle);
      this.server.use("/api/v1/clients",routerClient);
+     this.server.use("/api/v1/dette",routerDette);
+     this.server.use("/api/v1/auth",routerAuth);
+     this.server.use("/api/v1/paiement",routerPaiement)
     }
 }
 const server = express();

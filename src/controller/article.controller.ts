@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Controller from "../core/impl/controller";
-import prisma from "../config/prisma.config";
 import { StatusCodes } from "http-status-codes";
 import RestResponse from "../core/response";
 import app from "../app";
@@ -11,7 +10,11 @@ export default class ArticleController extends Controller{
 async store(req: Request, res: Response) {
     try {
         const newData = await app.prisma.article.create({
-            data: req.body
+            data:{
+                libelle:req.body.libelle,
+                prix:req.body.prix,
+                quantiteStock:req.body.quantiteStock
+            }
         });
         res.status(StatusCodes.OK)
             .send(RestResponse.response(newData, StatusCodes.OK));

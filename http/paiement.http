@@ -1,0 +1,11 @@
+POST http://localhost:3000/api/v1/paiement
+Content-Type: application/json
+Accept: application/json
+
+{
+    "detteId": 1,
+    "montantVerser": 5000
+}
+
+###
+GET http://localhost:3000/api/v1/paiement/1

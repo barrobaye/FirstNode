@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 interface playload{
-    id:number, email:string,role:string;
+    id:number, email:string;
 }
 const {JWT_SECRET, JWT_EXPIRES_IN} = process.env;
 export class encrypt{
@@ -14,7 +14,9 @@ export class encrypt{
         return bcrypt.compare(password, hashPassword)
         
     }
-    static async generateToken(playload:playload,expiresIn:string=JWT_EXPIRES_IN!){
-        return jwt.sign(playload, `${JWT_SECRET}`,{expiresIn: expiresIn})
+
 }
-}
+//ça passe pas
+//     static async generateToken(playload:playload,sercret:string=JWT_SECRET!,expiresIn:string=JWT_EXPIRES_IN!){
+//         return jwt.sign(playload, sercret,{expiresIn: expiresIn})
+// }

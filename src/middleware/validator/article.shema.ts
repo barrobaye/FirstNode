@@ -2,25 +2,28 @@ import { z } from "zod";
 import app from "../../app";
 
 
-export const verifieLibelle = async(value:string)=>{
+export const verifieLibelle = async (value: string): Promise<boolean> => {
     const count = await app.prisma.article.count({
-        where:{
-            libelle:value
+        where: {
+            libelle: value
         }
-    })
-    return count > 1
+    });
+    return count === 0;
 };
-export const articlePostShema = z.object({
-    libelle: z.string ({
-        required_error:"libelle obligatoire"
 
-    }).min(3).max(30, "libelle must be least 5 charactere")
-    .refine(verifieLibelle,"libelle exist déja"),
+export const articlePostShema = z.object({
+    libelle: z.string({
+        required_error: "Libellé obligatoire"
+    })
+    .min(3, "Le libellé doit contenir au moins 3 caractères")
+    .max(30, "Le libellé ne doit pas dépasser 30 caractères")
+    .refine(async (libelle) => await verifieLibelle(libelle), {
+        message: "Ce libellé existe déjà. Veuillez en choisir un autre."
+    }),
     prix: z.number().positive({
-        message:"le prix doit être positive"
+        message: "Le prix doit être positif"
     }),
     quantiteStock: z.number().positive({
-        message:"la quantité doit être positive"
+        message: "La quantité doit être positive"
     }),
-
-})
+});

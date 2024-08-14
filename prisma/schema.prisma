@@ -5,6 +5,71 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+    seed = "./prisma/seed.ts"
+}
+
+model Client {
+  id          Int      @id @default(autoincrement())
+  nom         String
+  prenom      String
+  telephone   String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User?
+  dettes      Dette[]
+}
+
+model Article {
+  id            Int      @id @default(autoincrement())
+  libelle       String
+  prix          Float
+  quantiteStock Int
+  detail        Detail[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Detail {
+  dette         Dette    @relation(fields: [detteId], references: [id])
+  detteId       Int
+  article       Article  @relation(fields: [articleId], references: [id])
+  articleId     Int
+  prixVente     Float
+  qteVente      Float
+  createdAt     DateTime @default(now())
+  @@id([detteId, articleId])
+}
+
+model Dette {
+  id               Int        @id @default(autoincrement())
+  clientId         Int
+  client           Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  montant          Float
+  detail           Detail[]
+  paiements        Paiement[]  
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  @@index([clientId], map: "Dette_clientId_idx_unique")  // Assure-toi que le nom ici est unique
+}
+
+model Paiement {  
+  id              Int         @id @default(autoincrement()) 
+  montantVerser   Float       
+  montantRest     Float
+  date            DateTime    @default(now())
+  detteId         Int
+  dette           Dette       @relation(fields: [detteId], references: [id], onDelete: Cascade)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  @@index([detteId], map: "Paiement_detteId_idx_unique")
+}
+
+
+
+enum Role {
+  CLIENT
+  ADMIN
+  BOUTIQUIER
 }
 
 model User {
@@ -13,67 +78,7 @@ model User {
   password  String
   role      Role     @default(CLIENT)
   clientId  Int      @unique
-  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client    Client   @relation(fields: [clientId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Client {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  prenom    String
-  telephone String   @unique
-  user      User?    
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Article {
-  id             Int            @id @default(autoincrement())
-  libelle        String         
-  prix           Float
-  quantiteStock  Int
-  dettes         Detail[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-}
-
-model Detail {
-  dette       Dette        @relation(fields: [detteId], references: [id])
-  detteId     Int
-  article     Article      @relation(fields: [articleId], references: [id])
-  articleId   Int
-  prixVente   Float
-  qteVente    Float
-  createdAt   DateTime       @default(now())
-  @@id ([detteId, articleId])
-}
-
-model Dette {
-  id             Int            @id @default(autoincrement())
-  clientId       Int
-  date           DateTime
-  montantDue     Float
-  montantVerser  Float
-  articles       Detail[]
-  paiements      Paiement[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  @@index([clientId], map: "Dette_clientId_fkey")
-}
-
-model Paiement {
-  id        Int      @id @default(autoincrement())
-  detteId   Int
-  dette     Dette    @relation(fields: [detteId], references: [id], onDelete: Cascade)
-  montant   Float
-  date      DateTime
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-
-enum Role {
-  CLIENT
-  ADMIN
-  BOUTIQUIER
 }
