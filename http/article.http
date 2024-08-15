@@ -1,11 +1,11 @@
 Post http://localhost:3000/api/v1/article
 Content-Type: application/json
 Accept:      application/json
-
+    
 {
     "libelle":"Lait",
     "prix": 3000,
-    "quantiteStock": 20
+    "quantiteStock": 0
 }
 ###
 GET http://localhost:3000/api/v1/article
@@ -13,8 +13,8 @@ GET http://localhost:3000/api/v1/article
 
 ###
 GET http://localhost:3000/api/v1/article/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiZW1haWwiOiJiYXJyb29AZXhhbXBsZS5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3MjM2NjY1OTAsImV4cCI6MTcyMzY3MDE5MH0.KN86VU3nut86lWLxCz8ytpt4Tsa29xrnUkPth4BtyHY
 
 
-###
-GET http://localhost:3000/api/v1/article/
+
 

@@ -1,111 +1,140 @@
 import { Request, Response } from "express";
-import Controller from "../core/impl/controller";
-import RestResponse from "../core/response";
 import { StatusCodes } from "http-status-codes";
 import app from "../app";
 
-export default class DetteController extends Controller{
-  async  store(req: Request, res: Response){
-    try {
-       // Check if client exists
-       const client = await app.prisma.client.findUnique({
-        where: { id: Number.parseInt(req.body.clientId) },
-    });
+export default class DetteController {
+    async store(req: Request, res: Response) {
+        try {
+            // Validate that the detail array exists and contains at least one item
+            if (!req.body.detail || !Array.isArray(req.body.detail) || req.body.detail.length === 0) {
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    status: StatusCodes.BAD_REQUEST,
+                    message: "Le tableau de détail doit contenir au moins un article.",
+                });
+                
+            }
+            if (!req.body.detail.articleId) {
+                return res.status(StatusCodes.NOT_FOUND).
+                    send({
+                        status: StatusCodes.NOT_FOUND,
+                        message: "Chaque élément de détail doit contenir un articleId valide.",
+                    })
+               
+            }
+                
+            // Validate that each item in the detail array has a valid articleId
+            
 
-    if (!client) {
-        return res.status(StatusCodes.NOT_FOUND).send(
-            RestResponse.response(null, StatusCodes.NOT_FOUND, "Le Client n'existe pas")
-        );
-      
-    } 
-   
-       // Check if article exists
-       const article = await app.prisma.article.findUnique({
-        where: { id: Number.parseInt(req.body.detail.articleId) },
-    });
-    if (!article) {
-        return res.status(StatusCodes.NOT_FOUND).send(
-            RestResponse.response(null, StatusCodes.NOT_FOUND, "article n'existe pas")
-        );
-    } 
-      const newData = await app.prisma.$transaction(async (tx) => {
-          // Create Dette
-          const newDette = await tx.dette.create({
-              data: {
-                  montant: req.body.montant,
-                  client: {
-                      connect: {
-                          id: Number.parseInt(req.body.clientId),
-                      },
-                  },
-                  detail: {
-                      create: req.body.detail.map((detail: any) => ({
-                          articleId: detail.articleId, // Ensure the detail has articleId
-                          prixVente: detail.prixVente,
-                          qteVente: detail.qteVente,
-                      })),
-                  },
-              },
-              include: {
-                  detail: {
-                      select: {
-                          article: {
-                              select: {
-                                  libelle:true,
-                                  id: true,
-                                  quantiteStock: true,
-                              },
-                          },
-                          qteVente: true,
-                      },
-                  },
-              },
-          });
-          // Update Article Quantities
-          await Promise.all(newDette.detail.map(async (detail) => {
-              await tx.article.update({
-                  where: { id: detail.article.id },
-                  data: {
-                      quantiteStock: detail.article.quantiteStock - detail.qteVente,
-                  },
-              });
-          }));
-          // Get Data After Transaction
-          return tx.dette.findFirst({
-              where: { id: newDette.id },
-              select: {
-                  montant:true,
-                  client: true,
-                  detail: {
-                      select: {
-                          article: true,
-                          qteVente: true,
-                          prixVente: true,
-                      },
-                  },
-              },
-          });
-      });
-  
-      res.status(StatusCodes.OK).send(RestResponse.response(newData, StatusCodes.OK));
-  } catch (error) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(RestResponse.response(error, StatusCodes.INTERNAL_SERVER_ERROR));
-  }
-  }  
+            const newDette = await app.prisma.$transaction(async (tx) => {
+                // Create the Dette entry
+                const createdDette = await tx.dette.create({
+                    data: {
+                        montant: req.body.montant,
+                        client: {
+                            connect: {
+                                id: Number(req.body.clientId),
+                            },
+                        },
+                        detail: {
+                            create: (req.body.detail as Array<{ articleId: number; qteVente: number; prixVente: number; }>).map((detail) => ({
+                                article: {
+                                    connect: {
+                                        id: Number(detail.articleId),
+                                    },
+                                },
+                                qteVente: detail.qteVente,
+                                prixVente: detail.prixVente,
+                            })),
+                        },
+                    },
+                    include: {
+                        detail: {
+                            select: {
+                                article: {
+                                    select: {
+                                        id: true,
+                                        quantiteStock: true,
+                                    },
+                                },
+                                qteVente: true,
+                            },
+                        },
+                    },
+                });
+
+                // Update article stock based on the created details
+                await Promise.all(
+                    createdDette.detail.map(async (detail: any) => {
+                        await tx.article.update({
+                            where: {
+                                id: detail.article.id,
+                            },
+                            data: {
+                                quantiteStock: detail.article.quantiteStock - detail.qteVente,
+                            },
+                        });
+                    })
+                );
+
+                return createdDette;
+            });
+
+            res.status(StatusCodes.CREATED).json({
+                status: StatusCodes.CREATED,
+                data: newDette,
+            });
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                status: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Erreur lors de la création de la dette",
+                error: (error as Error).message,
+            });
+        }
+    };
+    
+
+    // Example of additional methods
     async show(req: Request, res: Response) {
         try {
-            const data = await app.prisma.dette.findMany({
-                
+            const dette = await app.prisma.dette.findUnique({
+                where: { id: Number(req.params.id) },
+                include: { detail: true, client: true }
             });
-            res.status(StatusCodes.OK)
-                .send(RestResponse.response(data, StatusCodes.OK));
+            if (!dette) {
+                return res.status(StatusCodes.NOT_FOUND).send({
+                    status: StatusCodes.NOT_FOUND,
+                    message: "Dette not found",
+                });
+            }
+            res.status(StatusCodes.OK).send(dette);
         } catch (error) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-                .send(RestResponse.response(error, StatusCodes.NOT_FOUND));
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                status: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Erreur lors de la récupération de la dette",
+                error: (error as Error).message,
+            });
         }
-       }
-}
-    
- 
-   
+    }
 
+    async edit(req: Request, res: Response) {
+        try {
+            const updatedDette = await app.prisma.dette.update({
+                where: {
+                    id: Number(req.params.id),
+                },
+                data: {
+                    montant: req.body.montant,
+                    // Add other fields to be updated here
+                },
+            });
+        }catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                status: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Erreur lors de la récupération de la dette",
+                error: (error as Error).message,
+            });
+        }
+    }
+    
+    // Other methods can be defined similarly
+}

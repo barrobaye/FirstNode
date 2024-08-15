@@ -76,7 +76,7 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
-  role      Role     
+  role      Role     @default(ADMIN)
   clientId  Int      @unique
   client    Client   @relation(fields: [clientId], references: [id])
   createdAt DateTime @default(now())

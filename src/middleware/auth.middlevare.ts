@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 import app from "../app";
 import RestResponse from "../core/response";
 
-interface AuthRequest extends Request {
+
+export interface AuthRequest extends Request {
   user?: {
     id: number;
     role: string;

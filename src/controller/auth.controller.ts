@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import RestResponse from "../core/response";
 import { date, ZodDate } from "zod";
+import { AuthRequest } from "../middleware/auth.middlevare";
 
 export default class AuthController{
     async login (req: Request, res: Response){
@@ -64,22 +65,89 @@ export default class AuthController{
         }
 
 }
-async register (req: Request, res: Response){
+// async register(req: AuthRequest, res: Response) {
+//     try {
+//         const { email, password, clientId } = req.body;
+
+//         // Find the client by ID
+//         const client = await app.prisma.client.findUnique({
+//             where: { id: Number.parseInt(clientId) },
+//         });
+
+//         if (!client) {
+//             return res.status(StatusCodes.NOT_FOUND).send(
+//                 RestResponse.response(null, StatusCodes.NOT_FOUND, "Le Client n'existe pas")
+//             );
+//         }
+
+//         // Create the new user with a default role
+//         const newUser = await app.prisma.user.create({
+//             data: {
+//                 email,
+//                 password: await encrypt.encryptepass(password),
+//                 role: 'ADMIN',  // Set a default role
+//                 client: {
+//                     connect: { id: client.id }
+//                 }
+//             },
+//         });
+
+//         res.status(StatusCodes.CREATED).send(
+//             RestResponse.response(newUser, StatusCodes.CREATED, "Utilisateur créé avec succès.")
+//         );
+//     } catch (error) {
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(
+//             RestResponse.response(error, StatusCodes.INTERNAL_SERVER_ERROR, "Erreur lors de la création de l'utilisateur.")
+//         );
+//     }
+// }
+
+
+async register (req: AuthRequest, res: Response){
     try {
-     //   const newUser = await app.prisma.$transaction(async(tx) => {
-            const hashPassword = await encrypt.encryptepass(req.body.password)
-            const user = await app.prisma.user.create({
-                data:{
-                    email:req.body.email,
-                    password:hashPassword,
-                    clientId:req.body.clientId
+        const { email, password, clientId, role } = req.body;
+
+        // Find the client by ID
+        const client = await app.prisma.client.findUnique({
+            where: { id: Number.parseInt(clientId) },
+        });
+
+        if (!client) {
+            return res.status(StatusCodes.NOT_FOUND).send(
+                RestResponse.response(null, StatusCodes.NOT_FOUND, "Le Client n'existe pas")
+            );
+        }
+
+        // Check if the authenticated user is an admin
+        const userRole = req.user?.role;
+        if (userRole !== 'ADMIN' && role) {
+            return res.status(StatusCodes.FORBIDDEN).send(
+                RestResponse.response(null, StatusCodes.FORBIDDEN, "Seul un administrateur peut définir le rôle.")
+            );
+        }
+
+        // If the user is an admin, set the role; otherwise, default to 'CLIENT'
+        const newUserRole = userRole === 'ADMIN' && role ? role : 'CLIENT';
+
+        // Create the new user
+        const newUser = await app.prisma.user.create({
+            data: {
+                email,
+                password: await encrypt.encryptepass(password),
+                role: newUserRole,
+                client: {
+                    connect: { id: client.id }
                 }
-        })
-        res.status(StatusCodes.OK)
-        .send(RestResponse.response(user, StatusCodes.OK));
+            },
+        });
+
+        res.status(StatusCodes.CREATED).send(
+            RestResponse.response(newUser, StatusCodes.CREATED, "Utilisateur créé avec succès.")
+        );
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .send(RestResponse.response(error, StatusCodes.OK));    
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(
+            RestResponse.response(error, StatusCodes.INTERNAL_SERVER_ERROR, "Erreur lors de la création de l'utilisateur.")
+        );
     }
 }
 async logout (req: Request, res: Response){

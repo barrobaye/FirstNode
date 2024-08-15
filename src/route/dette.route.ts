@@ -1,12 +1,25 @@
 import { Router } from "express";
 import DetteController from "../controller/dette.controller";
 
-const routerDette = Router ();
+const router = Router();
+const detteController = new DetteController();
 
-const articleController = new DetteController;
-routerDette.get('/:id', articleController.edit);
-//routerDette.post('/libelle', articleController.editByLibelle);
-routerDette.get('/', articleController.show);
-routerDette.post('/', articleController.store);
+router.post('/', detteController.store.bind(detteController));
+router.get('/:id', detteController.show.bind(detteController));
+router.put('/:id', detteController.edit.bind(detteController)); // Ensure the method exists in the controller
 
-export  default routerDette;
+export default router;
+
+// import { Router } from "express";
+// import DetteController from "../controller/dette.controller";
+// import { authMiddleware, authorization } from "../middleware/auth.middlevare";
+
+// const routerDette = Router ();
+
+// const detteController = new DetteController;
+// routerDette.get('/:id',[authMiddleware(),authorization(["ADMIN","BOUTIQUIER"])],detteController.edit);
+// //routerDette.post('/libelle', articleController.editByLibelle);
+// routerDette.get('/',[authMiddleware(),authorization(["ADMIN","BOUTIQUIER"])],detteController.show);
+// routerDette.post('/', detteController.store);
+
+// // export  default routerDette

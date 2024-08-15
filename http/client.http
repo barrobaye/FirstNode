@@ -3,9 +3,9 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "nom": "Barroz",
-  "prenom": "Zarry",
-  "telephone": "791191189"
+  "nom": "Barro",
+  "prenom": "aruy",
+  "telephone": "100191189"
 }
 ###
 

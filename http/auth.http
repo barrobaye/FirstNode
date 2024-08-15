@@ -4,12 +4,10 @@ Accept: application/json
 
 
 {
-    "email":"yarro@gmail.com",
-    "password":"faye",
-    "clientId":4,
-    "role": 
+    "email":"barroo@example.com",
+    "password":"passer123",
+    "clientId":13
 }
-
 #####
 
 POST http://localhost:3000/api/v1/auth/login
@@ -17,6 +15,6 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "email":"bayii",
-    "password":"baye"
+    "email":"barroo@example.com",
+    "password":"passer123"
 }

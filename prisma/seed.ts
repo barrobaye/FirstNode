@@ -1,87 +1,121 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import { PrismaClient, Role } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Hash du mot de passe
-  const hashedPassword = await bcrypt.hash('password123', 10);
-
-  // Créer un client avec un utilisateur associé
-  const client = await prisma.client.create({
-    data: {
-      nom: 'Doe',
-      prenom: 'John',
-      telephone: '1234567890',
-      User: {
-        create: {
-          email: 'john.doe@example.com',
-          password: hashedPassword,
-          role: 'CLIENT',
-        },
+  try {
+    // Création de clients avec des numéros de téléphone uniques
+    const client1 = await prisma.client.create({
+      data: {
+        nom: 'Jean',
+        prenom: 'Dupont',
+        telephone: '123456789', // Assurez-vous que ce numéro est unique
       },
-    },
-  });
+    });
 
-  // Créer des articles
-  const article1 = await prisma.article.create({
-    data: {
-      libelle: 'Article 1',
-      prix: 10.0,
-      quantiteStock: 100,
-    },
-  });
-
-  const article2 = await prisma.article.create({
-    data: {
-      libelle: 'Article 2',
-      prix: 20.0,
-      quantiteStock: 50,
-    },
-  });
-
-  // Créer une dette pour le client
-  const dette = await prisma.dette.create({
-    data: {
-      clientId: client.id,
-      date: new Date(),
-      montant: 200.0,
-      montantDue: 150.0,
-      montantVerser: 50.0,
-      detail: {
-        create: [
-          {
-            articleId: article1.id,
-            prixVente: 10.0,
-            qteVente: 5.0,
-          },
-          {
-            articleId: article2.id,
-            prixVente: 20.0,
-            qteVente: 2.5,
-          },
-        ],
+    const client2 = await prisma.client.create({
+      data: {
+        nom: 'Marie',
+        prenom: 'Curie',
+        telephone: '987654321', // Assurez-vous que ce numéro est unique
       },
-    },
-  });
+    });
 
-  // Créer un paiement pour cette dette
-  await prisma.paiement.create({
-    data: {
-      detteId: dette.id,
-      montant: 50.0,
-      date: new Date(),
-    },
-  });
+    const client3 = await prisma.client.create({
+      data: {
+        nom: 'Barro',
+        prenom: 'Momo',
+        telephone: '007654321', // Assurez-vous que ce numéro est unique
+      },
+    });
 
-  console.log('Database seeded successfully');
+    // Création d'articles
+    const article1 = await prisma.article.create({
+      data: {
+        libelle: 'Article 1',
+        prix: 10.0,
+        quantiteStock: 100,
+      },
+    });
+
+    const article2 = await prisma.article.create({
+      data: {
+        libelle: 'Article 2',
+        prix: 20.0,
+        quantiteStock: 50,
+      },
+    });
+
+    // Création de dettes
+    const dette1 = await prisma.dette.create({
+      data: {
+        clientId: client1.id,
+        montant: 50.0,
+      },
+    });
+
+    // Création de détails
+    const detail1 = await prisma.detail.create({
+      data: {
+        articleId: article1.id,
+        detteId: dette1.id, // Assurez-vous que cet ID de Dette est valide
+        prixVente: 10.0,
+        qteVente: 2,
+      },
+    });
+
+    const detail2 = await prisma.detail.create({
+      data: {
+        articleId: article2.id,
+        detteId: dette1.id, // Assurez-vous que cet ID de Dette est valide
+        prixVente: 20.0,
+        qteVente: 1,
+      },
+    });
+
+    // Création de paiements
+    await prisma.paiement.create({
+      data: {
+        montantVerser: 30.0,
+        montantRest: 20.0,
+        date: new Date(),
+        detteId: dette1.id,
+      },
+    });
+
+    // Création d'utilisateurs
+    const user1 = await prisma.user.create({
+      data: {
+        email: 'jean.dupont@example.com',
+        password: 'hashedpassword1', // Assurez-vous de hacher les mots de passe
+        role: Role.CLIENT,
+        clientId: client1.id,
+      },
+    });
+
+    const user2 = await prisma.user.create({
+      data: {
+        email: 'marie.curie@example.com',
+        password: 'hashedpassword2', // Assurez-vous de hacher les mots de passe
+        role: Role.ADMIN,
+        clientId: client2.id,
+      },
+    });
+    const user3 = await prisma.user.create({
+      data: {
+        email: 'barroe@example.com',
+        password: '123passer', // Assurez-vous de hacher les mots de passe
+        role: Role.BOUTIQUIER,
+        clientId: client3.id,
+      },
+    });
+
+    console.log('Seed data has been added successfully!');
+  } catch (e) {
+    console.error(e);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main();

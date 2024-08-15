@@ -6,11 +6,13 @@ import { StatusCodes } from "http-status-codes";
 import RestResponse from "../core/response";
 import { z, ZodError } from "zod";
 import { userPostShema } from "./validator/user.shema";
+import { dettePostShema } from "./validator/dette.shema";
 
 const shema = {
     "post/api/v1/clients":clientPostShema,
     "post/api/v1/article":articlePostShema,
-    "post/api/v1/auth":userPostShema
+    "post/api/v1/auth":userPostShema,
+    "post/api/v1/dette":dettePostShema
     
     } as { [key:string]:z.ZodObject<any,any> };
 
