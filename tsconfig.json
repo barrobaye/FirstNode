@@ -6,12 +6,12 @@
       "esModuleInterop": true,
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true,
-      "outDir": "./dist",
+      "outDir": "src/dist",
       "rootDir": "./src",
       "strict": true
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "prisma/seed.ts"]
+    "exclude": ["node_modules", "src/dist", "prisma/seed.ts"]
   
   
   }
