@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js prisma generate && node src/server.js"
   },
   "keywords": [],
   "author": "",
