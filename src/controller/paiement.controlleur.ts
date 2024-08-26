@@ -3,13 +3,14 @@ import Controller from "../core/impl/controller";
     import { StatusCodes } from "http-status-codes";
 import app from "../app";
 import RestResponse from "../core/response";
+import { Prisma } from "@prisma/client";
 
 export default class PaiementController extends Controller{
     
     async store(req: Request, res: Response) {
         try {
             const { detteId, montantVerser } = req.body;
-            const result = await app.prisma.$transaction(async (tx) => {
+            const result = await app.prisma.$transaction(async (tx:Prisma.TransactionClient) => {
                 // Vérifier si cette dette existe
                 const dette = await tx.dette.findUnique({
                     where: { id: Number(detteId) },

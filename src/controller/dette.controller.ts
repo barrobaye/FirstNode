@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { Prisma } from '@prisma/client';
 import app from "../app";
 
 export default class DetteController {
@@ -42,7 +43,7 @@ export default class DetteController {
                 }
             } 
 
-            const newDette = await app.prisma.$transaction(async (tx) => {
+            const newDette = await app.prisma.$transaction(async (tx:Prisma.TransactionClient) => {
                 // Create the Dette entry
                 const createdDette = await tx.dette.create({
                     data: {

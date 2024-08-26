@@ -5,25 +5,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.articlePostShema = exports.verifieLibelle = void 0;
 const zod_1 = require("zod");
-const prisma_model_1 = __importDefault(require("../../core/impl/prisma.model"));
+const app_1 = __importDefault(require("../../app"));
 const verifieLibelle = async (value) => {
-    const count = await prisma_model_1.default.article.count({
+    const count = await app_1.default.prisma.article.count({
         where: {
             libelle: value
         }
     });
-    return count > 1;
+    return count === 0;
 };
 exports.verifieLibelle = verifieLibelle;
 exports.articlePostShema = zod_1.z.object({
     libelle: zod_1.z.string({
-        required_error: "libelle obligatoire"
-    }).min(3).max(30, "libelle must be least 5 charactere")
-        .refine(exports.verifieLibelle, "libelle exist déja"),
+        required_error: "Libellé obligatoire"
+    })
+        .min(3, "Le libellé doit contenir au moins 3 caractères")
+        .max(30, "Le libellé ne doit pas dépasser 30 caractères")
+        .refine(async (libelle) => await (0, exports.verifieLibelle)(libelle), {
+        message: "Ce libellé existe déjà. Veuillez en choisir un autre."
+    }),
     prix: zod_1.z.number().positive({
-        message: "le prix doit être positive"
+        message: "Le prix doit être positif"
     }),
     quantiteStock: zod_1.z.number().positive({
-        message: "la quantité doit être positive"
+        message: "La quantité doit être positive"
     }),
 });

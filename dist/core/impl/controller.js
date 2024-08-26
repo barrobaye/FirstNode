@@ -16,5 +16,8 @@ class Controller {
     remove(req, res) {
         throw new Error("Method not implemented.");
     }
+    filterBy(req, res) {
+        throw new Error("Method not implemented.");
+    }
 }
 exports.default = Controller;
