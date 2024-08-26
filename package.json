@@ -8,14 +8,15 @@
   },
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
-    "build": "prisma generate && tsc",
+    "prebuild": "prisma generate",
+    "build": "tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.17.0",
+    "@prisma/client": "^5.18.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.6",
     "bcrypt": "^5.1.1",

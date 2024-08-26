@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { Prisma } from '@prisma/client';
 import app from "../app";
+import { Prisma } from "@prisma/client";
 
 export default class DetteController {
     async store(req: Request, res: Response) {
