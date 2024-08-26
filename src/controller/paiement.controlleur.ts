@@ -25,9 +25,7 @@ export default class PaiementController extends Controller{
     
                 // Calculer le montant restant après le paiement
                 const montantRest = dette.montant - 
-                    dette.paiements.reduce((sum, p) => sum + p.montantVerser, 0) - 
-                    montantVerser;
-    
+                    dette.paiements - montantVerser;
                 // Créer un nouveau paiement
                 const newPaiement = await tx.paiement.create({
                     data: {
