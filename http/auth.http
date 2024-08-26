@@ -4,7 +4,7 @@ Accept: application/json
 
 
 {
-    "email":"barroo@example.com",
+    "email":"barro@ample.com",
     "password":"passer123",
     "clientId":13
 }
@@ -15,6 +15,6 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "email":"barroo@example.com",
-    "password":"passer123"
+    "email":"barro@mple.com",
+    "password":"barro123"
 }

@@ -12,8 +12,8 @@ import app from "../../app";
 // };
 
 export const dettePostShema = z.object({
-    montant: z.any({
-        required_error: "Libellé obligatoire"
+    montant: z.number().positive({
+        message: "Libellé obligatoire et doit être possitif"
     }),
   
     clientId: z.number().positive({

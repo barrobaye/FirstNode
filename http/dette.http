@@ -3,7 +3,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "montant": 120000,
+    "montant": 1000,
     "clientId": 1,
     "detail": [
         {

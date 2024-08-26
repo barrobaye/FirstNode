@@ -9,6 +9,8 @@ import { date, ZodDate } from "zod";
 import { AuthRequest } from "../middleware/auth.middlevare";
 
 export default class AuthController{
+
+    
     async login (req: Request, res: Response){
         try {
             // Log email and password for debugging

@@ -17,5 +17,8 @@ export default abstract class Controller implements IController {
     remove(req: Request, res: Response): void {
         throw new Error("Method not implemented.");
     }
+    filterBy(req: Request, res: Response):void{
+        throw new Error("Method not implemented.");
+    }
   
 }

@@ -6,9 +6,12 @@ import { authMiddleware, authorization } from "../middleware/auth.middlevare";
 const routerPaiement = Router ();
 
 const paiementController = new PaiementController;
-routerPaiement.get('/:id',[authMiddleware(),authorization(["ADMIN","BOUTIQUIER","CLIENT"])], paiementController.edit);
+routerPaiement.get('/:id', paiementController.edit);
+routerPaiement.get('/:status', paiementController.filterBy);
+
 //routerArticle.post('/libelle', paiementController.editByLibelle);
-routerPaiement.get('/',[authMiddleware(),authorization(["ADMIN","BOUTIQUIER"])], paiementController.show);
-routerPaiement.post('/',[authMiddleware(),authorization(["ADMIN","BOUTIQUIER","CLIENT"])], paiementController.store);
+routerPaiement.get('/',authMiddleware(),authorization(["ADMIN","BOUTIQUIER"]), paiementController.show);
+routerPaiement.post('/', paiementController.store);
 
 export  default routerPaiement;
+///[authMiddleware(),authorization(["ADMIN","BOUTIQUIER","CLIENT"])]

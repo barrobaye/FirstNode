@@ -5,25 +5,42 @@ import app from "../app";
 export default class DetteController {
     async store(req: Request, res: Response) {
         try {
+            const details = req.body.detail;
             // Validate that the detail array exists and contains at least one item
-            if (!req.body.detail || !Array.isArray(req.body.detail) || req.body.detail.length === 0) {
-                return res.status(StatusCodes.BAD_REQUEST).json({
-                    status: StatusCodes.BAD_REQUEST,
-                    message: "Le tableau de détail doit contenir au moins un article.",
+          
+            // Ensure that detail exists and is an array
+            if (!details || !Array.isArray(details) || details.length === 0) {
+                return res.status(StatusCodes.BAD_REQUEST)
+                    .send({
+                        status: StatusCodes.BAD_REQUEST,
+                        message: "Détails manquants ou format incorrect.",
+                    });
+            }
+    
+            // Check if every detail item contains a valid articleId
+            for (const detail of details) {
+                const articleId = detail.articleId;
+                if (!articleId) {
+                    return res.status(StatusCodes.NOT_FOUND)
+                        .send({
+                            status: StatusCodes.NOT_FOUND,
+                            message: "Chaque élément de détail doit contenir un articleId valide.",
+                        });
+                }
+    
+                // Verify if the articleId exists in the database
+                const articleExists = await app.prisma.article.findUnique({
+                    where: { id: articleId },
                 });
-                
-            }
-            if (!req.body.detail.articleId) {
-                return res.status(StatusCodes.NOT_FOUND).
-                    send({
-                        status: StatusCodes.NOT_FOUND,
-                        message: "Chaque élément de détail doit contenir un articleId valide.",
-                    })
-               
-            }
-                
-            // Validate that each item in the detail array has a valid articleId
-            
+    
+                if (!articleExists) {
+                    return res.status(StatusCodes.NOT_FOUND)
+                        .send({
+                            status: StatusCodes.NOT_FOUND,
+                            message: `L'article avec l'ID ${articleId} n'existe pas.`,
+                        });
+                }
+            } 
 
             const newDette = await app.prisma.$transaction(async (tx) => {
                 // Create the Dette entry
@@ -103,7 +120,7 @@ export default class DetteController {
             if (!dette) {
                 return res.status(StatusCodes.NOT_FOUND).send({
                     status: StatusCodes.NOT_FOUND,
-                    message: "Dette not found",
+                    message: "la Dette n'exste pas",
                 });
             }
             res.status(StatusCodes.OK).send(dette);
@@ -112,6 +129,30 @@ export default class DetteController {
                 status: StatusCodes.INTERNAL_SERVER_ERROR,
                 message: "Erreur lors de la récupération de la dette",
                 error: (error as Error).message,
+            });
+        }
+    }
+  async  filterBy(req: Request, res: Response){
+        try {
+            const dettes = await app.prisma.dette.findMany({
+                where: {
+                    status: true,  // Fetch only dettes where the status is true
+                },
+                include: {
+                    client: true,
+                    detail: true,
+                    paiements: true,
+                }
+            });
+    
+            res.status(StatusCodes.OK).send({
+                status: StatusCodes.OK,
+                data: dettes,
+            });
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+                status: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Erreur lors du traitement",
             });
         }
     }

@@ -10,6 +10,6 @@ const routerClient = Router();
 const clientController = new ClientController();
 routerClient.get('/:id',authMiddleware(),authorization(["ADMIN","BOUTIQUIER"]), clientController.edit);
 routerClient.get('/',authMiddleware(),authorization(["ADMIN","BOUTIQUIER"]), clientController.show);
-routerClient.post('/', [ValidatorShema()] ,clientController.store);
+routerClient.post('/', [ValidatorShema(),authMiddleware(),authorization(["ADMIN","BOUTIQUIER"])] ,clientController.store);
 
 export default routerClient;
