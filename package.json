@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js prisma generate && node src/server.js"
+    "build": "prisma generate && tsc",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
