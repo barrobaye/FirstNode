@@ -7,10 +7,10 @@
     "seed": "ts-node ./prisma/seed.ts"
   },
   "scripts": {
-    "dev": "ts-node-dev src/server.ts",
-    "prebuild": "npx prisma generate",
-    "build": "tsc",
-    "start": "node dist/server.js"
+   "start": "node dist/server.js",
+  "build": "npx tsc",
+  "dev": "nodemon src/server.ts",
+  "prisma:generate": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
