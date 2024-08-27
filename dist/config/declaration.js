@@ -1,2 +1,12 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+// import { Role } from "@prisma/client"; // Import Role if it's a custom enum
+// declare global {
+//   namespace Express {
+//     interface Request {
+//       user?: {
+//         id: number;
+//         role: string;
+//       };
+//     }
+//   }
+// }
