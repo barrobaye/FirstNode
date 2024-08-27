@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "nodemon dist/server.js",
     "dev": "nodemon src/server.ts",
     "prisma:generate": "npx prisma generate"
   },
