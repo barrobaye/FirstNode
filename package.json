@@ -2,7 +2,7 @@
   "name": "firstnode",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "prisma": {
     "seed": "ts-node ./prisma/seed.ts"
   },
@@ -10,7 +10,7 @@
     "dev": "ts-node-dev src/server.ts",
     "prebuild": "npx prisma generate",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
