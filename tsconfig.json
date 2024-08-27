@@ -10,7 +10,7 @@
       "rootDir": "./src",
       "strict": true
     },
-    "include": ["src/**/*", "dist"],
+    "include": ["src/**/*", "dist", "webpack.config.js"],
     "exclude": ["node_modules", "dist", "prisma/seed.ts"]
   
   
