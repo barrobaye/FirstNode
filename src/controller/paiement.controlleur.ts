@@ -5,6 +5,7 @@ import app from "../app";
 import RestResponse from "../core/response";
 import { Prisma } from "@prisma/client";
 
+
 export default class PaiementController extends Controller{
     
     async store(req: Request, res: Response) {
@@ -24,8 +25,8 @@ export default class PaiementController extends Controller{
                 }
     
                 // Calculer le montant restant après le paiement
-                const montantRest = dette.montant - 
-                    dette.paiements - montantVerser;
+                const totalPaid = dette.paiements.reduce((sum: number, p: { montantVerser: number }) => sum + p.montantVerser, 0);
+                const montantRest = dette.montant - totalPaid - montantVerser;
                 // Créer un nouveau paiement
                 const newPaiement = await tx.paiement.create({
                     data: {

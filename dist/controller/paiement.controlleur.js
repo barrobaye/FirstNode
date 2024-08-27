@@ -21,8 +21,8 @@ class PaiementController extends controller_1.default {
                     return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(response_1.default.response(null, http_status_codes_1.StatusCodes.NOT_FOUND, "Cette dette n'existe pas"));
                 }
                 // Calculer le montant restant après le paiement
-                const montantRest = dette.montant -
-                    dette.paiements - montantVerser;
+                const totalPaid = dette.paiements.reduce((sum, p) => sum + p.montantVerser, 0);
+                const montantRest = dette.montant - totalPaid - montantVerser;
                 // Créer un nouveau paiement
                 const newPaiement = await tx.paiement.create({
                     data: {
