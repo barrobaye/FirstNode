@@ -1,0 +1,18 @@
+Post http://localhost:3000/api/v1/categorie
+Content-Type: application/json
+Accept:      application/json
+
+    
+{
+    "libelle":"Cosmetique"
+  
+}
+
+
+###
+GET  http://localhost:3000/api/v1/categorie/6
+
+
+
+###
+GET  http://localhost:3000/api/v1/categorie

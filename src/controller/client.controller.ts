@@ -5,6 +5,7 @@ import RestResponse from "../core/response";
 import app from "../app";
 
 export default class ClientController extends Controller {
+
     async store(req: Request, res: Response) {
         try {
     
@@ -52,6 +53,36 @@ export default class ClientController extends Controller {
             } catch (error) {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR)
                     .send(RestResponse.response(error, StatusCodes.NOT_FOUND));
+            }
+        }
+        async update(req: Request, res: Response) {
+            try {
+                const updatedClient = await app.prisma.client.update({
+                    where: { id: Number.parseInt(req.params.id) },
+                    data: {
+                        libelle: req.body.libelle,
+                        prix: req.body.prix,
+                        quantiteStock: req.body.quantiteStock
+                    }
+                });
+                res.status(StatusCodes.OK)
+                    .send(RestResponse.response(updatedClient, StatusCodes.OK));
+            } catch (error) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .send(RestResponse.response(error, StatusCodes.NOT_FOUND, "Erreur lors de la mise à jour de Client"));
+            }
+        }
+        
+        async remove(req: Request, res: Response) {
+            try {
+                const deletedClient = await app.prisma.client.delete({
+                    where: { id: Number.parseInt(req.params.id) },
+                });
+                res.status(StatusCodes.OK)
+                    .send(RestResponse.response(deletedClient, StatusCodes.OK));
+            } catch (error) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .send(RestResponse.response(error, StatusCodes.NOT_FOUND, "Erreur lors de la suppression de Client"));
             }
         }
     }

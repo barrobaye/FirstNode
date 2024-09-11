@@ -4,19 +4,28 @@ Accept:      application/json
 
     
 {
-    "libelle":"Lait",
+     "libelle": "Lait",
     "prix": 3000,
-    "quantiteStock": 20
+    "quantiteStock": 20,
+    "categoriId": 2
 }
 ###
 GET http://localhost:3000/api/v1/article
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJiYXJyb0BtcGxlLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyNDY4MTE2NCwiZXhwIjoxNzI0Njg0NzY0fQ.hB48vc6ZNSKNVF6_XRIZSQlv1as0nfm31MRGS_F4UZ8
+//Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJiYXJyb0BtcGxlLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyNDg4NzE4MywiZXhwIjoxNzI0ODkwNzgzfQ.2S_1q1jZv8vY6EceLImyjsesd7LPMV2S1hYzESKyavY
 
 
 ###
-GET http://localhost:3000/api/v1/article/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJiYXJyb0BtcGxlLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyNDY4MTE2NCwiZXhwIjoxNzI0Njg0NzY0fQ.hB48vc6ZNSKNVF6_XRIZSQlv1as0nfm31MRGS_F4UZ8
+GET http://localhost:3000/api/v1/article/4
+//Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJiYXJyb0BtcGxlLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyNDY4MTE2NCwiZXhwIjoxNzI0Njg0NzY0fQ.hB48vc6ZNSKNVF6_XRIZSQlv1as0nfm31MRGS_F4UZ8
 
+###
+Put http://localhost:3000/api/v1/article/4
+Content-Type: application/json
+Accept:      application/json
 
-
+    
+{  
+    "id":4,
+    "quantiteStock": 22
+}
 

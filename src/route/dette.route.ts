@@ -5,7 +5,7 @@ import ValidatorShema from "../middleware/validator.middleware";
 const router = Router();
 const detteController = new DetteController();
 
-router.post('/',[ValidatorShema()], detteController.store.bind(detteController));
+router.post('/', detteController.store.bind(detteController));
 router.get('/:id', detteController.show.bind(detteController));
 router.put('/:id', detteController.edit.bind(detteController)); // Ensure the method exists in the controller
 
@@ -23,4 +23,4 @@ export default router;
 // routerDette.get('/',[authMiddleware(),authorization(["ADMIN","BOUTIQUIER"])],detteController.show);
 // routerDette.post('/', detteController.store);
 
-// // export  default routerDette
+// // export  default routerDette  ,[ValidatorShema()]

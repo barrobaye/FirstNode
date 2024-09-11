@@ -8,17 +8,14 @@ import { encrypt } from "../helper/encrypt";
 
 export default class UserController extends Controller {
 
-    async store(req: Request, res: Response) {
-
+    async store(req: Request, res: Response) {  
         try {
             const newClient = await app.prisma.user.create({
                 data: {
                     email:req.body.email,
                     password: await encrypt.encryptepass(req.body.password),
                     role:req.body.role
-                }
-             
-                
+                }       
             }) 
             res.status(StatusCodes.OK)
                 .send(RestResponse.response({ client: newClient}, StatusCodes.OK));
@@ -30,7 +27,6 @@ export default class UserController extends Controller {
             } else {
                 console.error("Unexpected Error:", error);
             }
-        
             res.status(StatusCodes.INTERNAL_SERVER_ERROR)
                 .send(RestResponse.response(error, StatusCodes.INTERNAL_SERVER_ERROR, "Erreur lors du traitement"));
         }

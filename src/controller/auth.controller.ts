@@ -9,62 +9,65 @@ import { date, ZodDate } from "zod";
 import { AuthRequest } from "../middleware/auth.middlevare";
 
 export default class AuthController{
-
     
     async login (req: Request, res: Response){
         try {
-            // Log email and password for debugging
-           // console.log("Email:", req.body.email);
-            //console.log("Password:", req.body.password);
-    
-            const user = await app.prisma.user.findUnique({
-                where: { email: req.body.email },
-                select: {
-                    id: true,
-                    email: true,
-                    password: true,
-                    role: true,
-                    client: {
-                        select: {
-                            nom: true,
-                            prenom: true,
-                            telephone: true
-                        }
-                    }
-                }
-            });
-    
-            // Log the user object for debugging
-           // console.log("Retrieved User:", user);
-    
-            if (user && bcrypt.compareSync(req.body.password, user.password)) {
-                // If this works, the issue might be with the implementation of encrypt.comparepassword
-                const token = jwt.sign(
-                    { id: user.id, email: user.email, role: user.role },
-                    process.env.JWT_SECRET as string,
-                    { expiresIn: '1h' }
-                );
-            
-                return res.status(StatusCodes.OK).send({
-                    token: token
-                });
-            } else {
-                console.log('Password does not match');
+            // Extraction correcte de l'email et du mot de passe depuis le corps de la requête
+            const { email, password } = req.body;
+        
+            // Vérifiez que l'email et le mot de passe ne sont pas undefined
+            if (!email || !password) {
+              return res.status(400).json({ message: "Email and password are required" });
             }
-    
-            return res.status(StatusCodes.UNAUTHORIZED).send({
-                status: StatusCodes.UNAUTHORIZED,
-                data: null,
-                message: "email ou password incorrecte"
+        
+            // Utilisez correctement l'email pour trouver l'utilisateur
+            const user = await app.prisma.user.findUnique({
+              where: {
+                email: email, // Assurez-vous que 'email' n'est pas undefined ici
+              },
+              select: {
+                id: true,
+                email: true,
+                password: true,
+                role: true,
+                client: {
+                  select: {
+                    nom: true,
+                    prenom: true,
+                    telephone: true,
+                  },
+                },
+              },
             });
-    
-        } catch (error) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                status: StatusCodes.INTERNAL_SERVER_ERROR,
-                data: error,
-                message: "Erreur lors du traitement"
-            });
-        }
+        
+            if (user && bcrypt.compareSync(req.body.password, user.password)) {
+              // If this works, the issue might be with the implementation of encrypt.comparepassword
+              const token = jwt.sign(
+                  { id: user.id, email: user.email, role: user.role },
+                  process.env.JWT_SECRET as string,
+                  { expiresIn: '1h' }
+              );
+          
+              return res.status(StatusCodes.OK).send({
+                  token: token
+              });
+          } else {
+              console.log('Password does not match');
+          }
+  
+          return res.status(StatusCodes.UNAUTHORIZED).send({
+              status: StatusCodes.UNAUTHORIZED,
+              data: null,
+              message: "email ou password incorrecte"
+          });
+  
+      } catch (error) {
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+              status: StatusCodes.INTERNAL_SERVER_ERROR,
+              data: error,
+              message: "Erreur lors du traitement"
+          });
+      }
 
 }
 // async register(req: AuthRequest, res: Response) {

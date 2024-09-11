@@ -10,8 +10,9 @@ routerPaiement.get('/:id', paiementController.edit);
 routerPaiement.get('/:status', paiementController.filterBy);
 
 //routerArticle.post('/libelle', paiementController.editByLibelle);
-routerPaiement.get('/',authMiddleware(),authorization(["ADMIN","BOUTIQUIER"]), paiementController.show);
+routerPaiement.get('/', paiementController.show);
 routerPaiement.post('/', paiementController.store);
 
 export  default routerPaiement;
 ///[authMiddleware(),authorization(["ADMIN","BOUTIQUIER","CLIENT"])]
+//authMiddleware(),authorization(["ADMIN","BOUTIQUIER"]),

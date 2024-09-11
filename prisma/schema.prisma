@@ -17,16 +17,26 @@ model Client {
   updatedAt   DateTime @updatedAt
   User        User?
   dettes      Dette[]
+
 }
 
 model Article {
-  id            Int      @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   libelle       String
   prix          Float
   quantiteStock Int
   detail        Detail[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  categorie     Categorie?     @relation(fields: [categoriId], references: [id])
+  categoriId    Int?          
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  @@index([categoriId], map: "Article_categoriId_idx_unique")
+}
+
+model Categorie {
+  id          Int             @id @default(autoincrement())
+  libelle    String           @unique
+  Article    Article[]
 }
 
 model Detail {
@@ -41,17 +51,34 @@ model Detail {
 }
 
 model Dette {
-  id               Int        @id @default(autoincrement())
+  id               Int             @id @default(autoincrement())
   clientId         Int
-  client           Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client           Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
   montant          Float
-  status          Boolean     @default(false)
+  status           Boolean         @default(false)
   detail           Detail[]
-  paiements        Paiement[]  
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  @@index([clientId], map: "Dette_clientId_idx_unique")  // Assure-toi que le nom ici est unique
+  paiements        Paiement[]
+  demande          Demande?        @relation("DetteDemande") // Relation un-à-un, optionnelle
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  @@index([clientId], map: "Dette_clientId_idx_unique")
 }
+
+model Demande {
+  id               Int             @id @default(autoincrement())
+  detteId          Int?            @unique // Ajout de @unique pour garantir l'unicité de la relation
+  dette            Dette?          @relation(fields: [detteId], references: [id], name: "DetteDemande") // Relation un-à-un
+  etatDemande      EtaDemande      @default(EN_ATTENTE)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+enum EtaDemande {
+  ACCEPTER
+  NON_ACCEPTER
+  EN_ATTENTE
+}
+
 
 model Paiement {  
   id              Int         @id @default(autoincrement()) 
@@ -73,11 +100,12 @@ enum Role {
   BOUTIQUIER
 }
 
+
 model User {
   id        Int             @id @default(autoincrement())
   email     String          @unique
   password  String
-  role      Role    
+  role      Role      
   clientId  Int?            @unique 
   client    Client?         @relation(fields: [clientId], references: [id])
   createdAt DateTime        @default(now())
