@@ -9,6 +9,7 @@ const articleController = new ArticleController;
 routerArticle.get('/:id', articleController.edit);
 routerArticle.get('/', articleController.show);
 routerArticle.post('/', articleController.store);
+routerArticle.post('/libelle', articleController.findByLibelle);
 routerArticle.put('/:id', articleController.update);
 routerArticle.delete('/:id', articleController.remove);
 
