@@ -15,19 +15,23 @@ GET http://localhost:3000/api/v1/article
 
 
 ###
-GET http://localhost:3000/api/v1/article/4
+DELETE   http://localhost:3000/api/v1/article/1
 //Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJiYXJyb0BtcGxlLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTcyNDY4MTE2NCwiZXhwIjoxNzI0Njg0NzY0fQ.hB48vc6ZNSKNVF6_XRIZSQlv1as0nfm31MRGS_F4UZ8
 
 ###
-Put http://localhost:3000/api/v1/article/4
+Put http://localhost:3000/api/v1/article/12
 Content-Type: application/json
 Accept:      application/json
 
     
-{  
-   
-    "quantiteStock": 25
-}
+[
+    {
+        "id": 12,
+        "data": {
+            "quantiteStock": 25
+        }
+    }
+]
 
 
 ###

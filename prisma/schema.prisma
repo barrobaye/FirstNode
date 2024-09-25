@@ -42,7 +42,7 @@ model Categorie {
 model Detail {
   dette         Dette    @relation(fields: [detteId], references: [id])
   detteId       Int
-  article       Article  @relation(fields: [articleId], references: [id])
+  article    Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId     Int
   prixVente     Float
   qteVente      Float
