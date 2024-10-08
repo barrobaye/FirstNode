@@ -6,24 +6,33 @@ import app from "../app";
 
 export default class ArticleController extends Controller{
     
-// Créer un nouvel article
-async store(req: Request, res: Response) {
-    try {
-        const newData = await app.prisma.article.create({
-            data: {
-                libelle: req.body.libelle.toLowerCase(),  // Convertir en lowercase avant l'ajout
-                prix: req.body.prix,
-                quantiteStock: req.body.quantiteStock,
-                categoriId: req.body.categoriId,  // Ajout de la catégorie si présente
+    async store(req: Request, res: Response) {
+        try {
+            // Ensure category exists before creating an article
+            const category = await app.prisma.categorie.findUnique({
+                where: { id: req.body.categoriId },
+            });
+            if (!category) {
+                return res.status(StatusCodes.BAD_REQUEST)
+                    .send(RestResponse.response(null, StatusCodes.BAD_REQUEST, "Catégorie invalide"));
             }
-        });
-        res.status(StatusCodes.OK)
-            .send(RestResponse.response(newData, StatusCodes.OK));
-    } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST)
-            .send(RestResponse.response(error, StatusCodes.BAD_REQUEST, "Erreur lors du traitement"));
+    
+            const newData = await app.prisma.article.create({
+                data: {
+                    libelle: req.body.libelle.toLowerCase(), // Convert to lowercase
+                    prix: req.body.prix,
+                    quantiteStock: req.body.quantiteStock,
+                    categoriId: req.body.categoriId,  // Add category if present
+                }
+            });
+            return res.status(StatusCodes.CREATED)
+                .send(RestResponse.response(newData, StatusCodes.CREATED));
+        } catch (error) {
+            console.error("Erreur lors de la création de l'article:", error);
+            return res.status(StatusCodes.BAD_REQUEST)
+                .send(RestResponse.response(error, StatusCodes.BAD_REQUEST, "Erreur lors du traitement"));
+        }
     }
-}
 
 // Récupérer tous les articles
 async show(req: Request, res: Response) {

@@ -24,9 +24,11 @@ export default class ClientController extends Controller {
             try {
                 const clients = await app.prisma.client.findMany({
                     select: {
+                        id:true,
                         nom: true,
                         prenom: true,
                         telephone: true,
+                      
                     }
                 });
     
@@ -47,7 +49,54 @@ export default class ClientController extends Controller {
                         telephone: true,
                     }
                 });
-    
+                res.status(StatusCodes.OK)
+                    .send(RestResponse.response(client, StatusCodes.OK));
+            } catch (error) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .send(RestResponse.response(error, StatusCodes.NOT_FOUND));
+            }
+        }
+        async editClientDette(req: Request, res: Response) {
+            try {
+                const client = await app.prisma.client.findFirstOrThrow({
+                    where: { id: Number.parseInt(req.params.id) },
+                    select: {
+                        nom: true,
+                        prenom: true,
+                        telephone: true,
+                         async edit(req: Request, res: Response) {
+            try {
+                const client = await app.prisma.client.findFirstOrThrow({
+                    where: { id: Number.parseInt(req.params.id) },
+                    select: {
+                        nom: true,
+                        prenom: true,
+                        telephone: true,
+                        dette:{
+                            select:{
+                                id:true,
+                                montant:true,
+                                date:true,
+                                detai:{
+                                    select:{
+                                        id:true,
+                                        description:true,
+                                        montant:true,
+                                        date:true,
+                                }
+                            }
+                        }
+                    }
+                });
+                res.status(StatusCodes.OK)
+                    .send(RestResponse.response(client, StatusCodes.OK));
+            } catch (error) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .send(RestResponse.response(error, StatusCodes.NOT_FOUND));
+            }
+        }
+                    }
+                });
                 res.status(StatusCodes.OK)
                     .send(RestResponse.response(client, StatusCodes.OK));
             } catch (error) {
@@ -70,6 +119,33 @@ export default class ClientController extends Controller {
             } catch (error) {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR)
                     .send(RestResponse.response(error, StatusCodes.NOT_FOUND, "Erreur lors de la mise à jour de Client"));
+            }
+        }
+        async findByPhone(req: Request, res: Response) {
+            try {
+                const  phone  = req.body.telephone; 
+               // const searchLibelle = req.body.libelle.toLowerCase();  // Convertir en lowercase pour la recherche
+                const data = await app.prisma.client.findMany({
+                    where: {
+                        telephone:phone
+                    },
+                    select: {
+                        nom: true,
+                        prenom: true,
+                        telephone: true,
+                    }
+                });
+        
+                if (data.length > 0) {
+                    res.status(StatusCodes.OK)
+                        .send(RestResponse.response(data, StatusCodes.OK));
+                } else {
+                    res.status(StatusCodes.NOT_FOUND)
+                        .send(RestResponse.response(null, StatusCodes.NOT_FOUND, "Aucun Client trouvé avec ce numéro"));
+                }
+            } catch (error) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .send(RestResponse.response(error, StatusCodes.INTERNAL_SERVER_ERROR));
             }
         }
         

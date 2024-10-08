@@ -11,6 +11,9 @@ const clientController = new ClientController();
 routerClient.get('/:id', clientController.edit);
 routerClient.get('/', clientController.show);
 routerClient.post('/',clientController.store);
+routerClient.post('/telephone',clientController.findByPhone);
+
+
 
 // routerClient.get('/:id',authMiddleware(),authorization(["ADMIN","BOUTIQUIER"]), clientController.edit);
 // routerClient.get('/',authMiddleware(),authorization(["ADMIN","BOUTIQUIER"]), clientController.show);
