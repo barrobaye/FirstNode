@@ -84,7 +84,7 @@ model Paiement {
   id              Int         @id @default(autoincrement()) 
   montantVerser   Float       
   montantRest     Float
-  date            DateTime   @default(now())
+  date            DateTime     @default(now())
   detteId         Int
   dette           Dette       @relation(fields: [detteId], references: [id], onDelete: Cascade)
   createdAt       DateTime    @default(now())

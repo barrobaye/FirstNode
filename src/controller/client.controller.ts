@@ -57,14 +57,7 @@ export default class ClientController extends Controller {
             }
         }
         async editClientDette(req: Request, res: Response) {
-            try {
-                const client = await app.prisma.client.findFirstOrThrow({
-                    where: { id: Number.parseInt(req.params.id) },
-                    select: {
-                        nom: true,
-                        prenom: true,
-                        telephone: true,
-                         async edit(req: Request, res: Response) {
+          
             try {
                 const client = await app.prisma.client.findFirstOrThrow({
                     where: { id: Number.parseInt(req.params.id) },
@@ -82,12 +75,14 @@ export default class ClientController extends Controller {
                                         id:true,
                                         description:true,
                                         montant:true,
-                                        date:true,
+                                        date:true
                                 }
                             }
                         }
                     }
-                });
+                }
+            });
+                
                 res.status(StatusCodes.OK)
                     .send(RestResponse.response(client, StatusCodes.OK));
             } catch (error) {
@@ -95,8 +90,80 @@ export default class ClientController extends Controller {
                     .send(RestResponse.response(error, StatusCodes.NOT_FOUND));
             }
         }
+        async editClientDetailDette(req: Request, res: Response) {
+            try {
+                const client = await app.prisma.client.findFirstOrThrow({
+                    where: { id: Number.parseInt(req.params.id) },
+                    select: {
+                        dette:{
+                            select:{
+                                id:true,
+                                detail:{
+                                    select:{
+                                        id:true,
+                                        article:{
+                                            select:{
+                                                id:true,
+                                                libelle:true,
+                                                prix:true,
+                                                categorie:true
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                });
+                }
+            });
+                
+                res.status(StatusCodes.OK)
+                    .send(RestResponse.response(client, StatusCodes.OK));
+            } catch (error) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .send(RestResponse.response(error, StatusCodes.NOT_FOUND));
+            }
+        }
+        async editClientPaiement(req: Request, res: Response) {
+            try {
+                const client = await app.prisma.client.findFirstOrThrow({
+                    where: { id: Number.parseInt(req.params.id) },
+                    select: {
+                        dette:{
+                            select:{
+                                id:true,
+                             paiement:{
+                                select:{
+                                    detteId:true,
+                                    montantVerser:true,
+                                    montantRest:true,
+                                }
+                             }
+                        }
+                    }
+                }
+            });
+                
+                res.status(StatusCodes.OK)
+                    .send(RestResponse.response(client, StatusCodes.OK));
+            } catch (error) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                    .send(RestResponse.response(error, StatusCodes.NOT_FOUND));
+            }
+        }
+        async editClientUser(req: Request, res: Response) {
+            try {
+                const client = await app.prisma.client.findFirstOrThrow({
+                    where: { id: Number.parseInt(req.params.id) },
+                    select: {
+                        User:{
+                            select:{
+                                id:true,
+                                email:true,
+                            }
+                        }
+                }
+            });
+                
                 res.status(StatusCodes.OK)
                     .send(RestResponse.response(client, StatusCodes.OK));
             } catch (error) {

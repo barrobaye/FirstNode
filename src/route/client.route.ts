@@ -9,6 +9,10 @@ const routerClient = Router();
 
 const clientController = new ClientController();
 routerClient.get('/:id', clientController.edit);
+routerClient.get('/:id/dettes', clientController.editClientDette);
+routerClient.get('/dettes/:id/articles', clientController.editClientDetailDette);
+routerClient.get('/dettes/:id/paiement', clientController.editClientPaiement);
+routerClient.get('/:id/user', clientController.editClientUser);
 routerClient.get('/', clientController.show);
 routerClient.post('/',clientController.store);
 routerClient.post('/telephone',clientController.findByPhone);
