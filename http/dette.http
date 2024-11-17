@@ -3,13 +3,15 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "montant": 1000,
     "clientId": 1,
     "detail": [
         {
             "articleId": 1,
-            "qteVente": 1,
-            "prixVente": 40000000
+            "qteVente": 1
+        },
+        {
+            "articleId": 2,
+            "qteVente": 2
         }
     ]
 }

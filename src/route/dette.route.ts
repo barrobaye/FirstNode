@@ -6,7 +6,7 @@ const router = Router();
 const detteController = new DetteController();
 
 router.post('/', detteController.store.bind(detteController));
-router.get('/:id', detteController.show.bind(detteController));
+router.get('/', detteController.show.bind(detteController));
 router.put('/:id', detteController.edit.bind(detteController)); // Ensure the method exists in the controller
 
 export default router;
