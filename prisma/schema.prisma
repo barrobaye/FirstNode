@@ -8,17 +8,7 @@ generator client {
     seed = "./prisma/seed.ts"
 }
 
-model Client {
-  id          Int      @id @default(autoincrement())
-  nom         String
-  prenom      String
-  telephone   String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  User        User?
-  dettes      Dette[]
 
-}
 
 model Article {
   id            Int           @id @default(autoincrement())
@@ -92,20 +82,29 @@ model Paiement {
   @@index([detteId], map: "Paiement_detteId_idx_unique")
 }
 
-
-
 enum Role {
   CLIENT
   ADMIN
   BOUTIQUIER
 }
 
+model Client {
+  id          Int      @id @default(autoincrement())
+  nom         String
+  prenom      String
+  telephone   String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User?    
+  dettes      Dette[]
+}
 
 model User {
   id        Int             @id @default(autoincrement())
   email     String          @unique
   password  String
-  role      Role      
+  role      Role            @default(CLIENT) 
+  telephone String?         @unique
   clientId  Int?            @unique 
   client    Client?         @relation(fields: [clientId], references: [id])
   createdAt DateTime        @default(now())

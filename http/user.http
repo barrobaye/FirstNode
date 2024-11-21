@@ -8,3 +8,20 @@ Accept: application/json
     "password":"barro123",
     "role":    "ADMIN"  
 }
+
+
+###
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+Accept: application/json
+
+
+{
+  "email": "userA@example.com",
+  "password": "securepassword",
+   "clientId": 1
+}
+
+
+###
+GET http://localhost:3000/api/v1/users
